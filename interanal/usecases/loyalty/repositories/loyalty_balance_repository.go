@@ -49,6 +49,26 @@ func (r *SqlLoyaltyBalanceRepository) GetUserBalance(
 	return lb, nil
 }
 
+// CreateUserBalance - создание бонусного баланса пользователю
+func (r *SqlLoyaltyBalanceRepository) CreateUserBalance(ctx context.Context, userID int64) error {
+	insertBuilder := sq.
+		Insert("loyalty_balance").
+		Columns("user_id", "count").
+		Values(userID, 0).PlaceholderFormat(sq.Dollar)
+
+	insertQuery, insertArgs, err := insertBuilder.ToSql()
+	if err != nil {
+		return fmt.Errorf("failed to build insert query: %w", err)
+	}
+
+	_, err = r.db.ExecContext(ctx, insertQuery, insertArgs...)
+	if err != nil {
+		return fmt.Errorf("failed to insert balance: %w", err)
+	}
+
+	return nil
+}
+
 // ConclusionUserBalance - «вывод» баланса (уменьшение Count)
 func (r *SqlLoyaltyBalanceRepository) ConclusionUserBalance(
 	ctx context.Context,

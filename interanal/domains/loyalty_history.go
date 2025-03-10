@@ -1,11 +1,14 @@
 package domains
 
-import "github.com/Axel791/appkit"
+import (
+	"database/sql"
+	"github.com/Axel791/appkit"
+)
 
 type LoyaltyHistory struct {
-	ID      int64
+	ID      sql.NullInt64
 	UserID  int64
-	OrderID int64
+	OrderID sql.NullInt64
 	Count   int64
 }
 
@@ -17,7 +20,7 @@ func (v *LoyaltyHistory) ValidateUserID() error {
 }
 
 func (v *LoyaltyHistory) ValidateOrderID() error {
-	if v.OrderID <= 0 {
+	if v.OrderID.Int64 <= 0 {
 		return appkit.ValidationError("invalid orderID")
 	}
 	return nil

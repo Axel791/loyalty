@@ -2,6 +2,7 @@ package domains
 
 import (
 	"database/sql"
+
 	"github.com/Axel791/appkit"
 )
 

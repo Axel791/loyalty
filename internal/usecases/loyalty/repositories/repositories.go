@@ -2,7 +2,8 @@ package repositories
 
 import (
 	"context"
-	"github.com/Axel791/loyalty/interanal/domains"
+
+	"github.com/Axel791/loyalty/internal/domains"
 )
 
 type LoyaltyRepository interface {

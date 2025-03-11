@@ -5,7 +5,7 @@ import (
 
 	"github.com/pressly/goose/v3"
 
-	"github.com/Axel791/loyalty/interanal/config"
+	"github.com/Axel791/loyalty/internal/config"
 	"github.com/jmoiron/sqlx"
 )
 

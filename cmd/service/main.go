@@ -1,11 +1,20 @@
 package main
 
 import (
-	"github.com/Axel791/loyalty/interanal/config"
-	"github.com/Axel791/loyalty/interanal/db"
+	"net"
+
+	"github.com/Axel791/loyalty/internal/config"
+	"github.com/Axel791/loyalty/internal/db"
+	v1 "github.com/Axel791/loyalty/internal/grpc/v1"
+	"github.com/Axel791/loyalty/internal/grpc/v1/pb"
+	"github.com/Axel791/loyalty/internal/usecases/loyalty/repositories"
+	"github.com/Axel791/loyalty/internal/usecases/loyalty/scenarios"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -21,7 +30,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("error loading config: %v", err)
 	}
-
+	log.Infof("databse_dsn: %s", cfg.DatabaseDSN)
 	dbConn, err := db.ConnectDB(cfg.DatabaseDSN, cfg)
 	if err != nil {
 		log.Fatalf("error connecting to database: %v", err)
@@ -35,4 +44,30 @@ func main() {
 	router := chi.NewRouter()
 	router.Use(middleware.StripSlashes)
 	router.Use(middleware.Logger)
+
+	grpcServer := grpc.NewServer()
+
+	// Repositories
+	loyaltyBalanceRepository := repositories.NewSqlLoyaltyRepository(dbConn)
+
+	// UseCases
+	createUserBalance := scenarios.NewCreateLoyaltyBalance(loyaltyBalanceRepository)
+
+	// gRPC
+	loyaltyServer := v1.NewLoyaltyServer(createUserBalance)
+
+	pb.RegisterLoyaltyServiceServer(grpcServer, loyaltyServer)
+
+	lis, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		log.Fatalf("failed to listen on :50051: %v", err)
+	}
+	log.Println("Starting Loyalty gRPC server on :50051")
+
+	if err := grpcServer.Serve(lis); err != nil {
+		log.Fatalf("failed to serve gRPC: %v", err)
+	}
+
+	// REST
+
 }

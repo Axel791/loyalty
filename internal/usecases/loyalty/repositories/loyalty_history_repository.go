@@ -3,7 +3,8 @@ package repositories
 import (
 	"context"
 	"fmt"
-	"github.com/Axel791/loyalty/interanal/domains"
+
+	"github.com/Axel791/loyalty/internal/domains"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 )

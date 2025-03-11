@@ -2,8 +2,9 @@ package scenarios
 
 import (
 	"context"
-	"github.com/Axel791/loyalty/interanal/domains"
-	"github.com/Axel791/loyalty/interanal/usecases/loyalty/dto"
+
+	"github.com/Axel791/loyalty/internal/domains"
+	"github.com/Axel791/loyalty/internal/usecases/loyalty/dto"
 )
 
 type InputUserBalanceUseCase interface {

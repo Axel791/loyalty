@@ -3,8 +3,9 @@ package scenarios
 import (
 	"context"
 	"fmt"
-	"github.com/Axel791/loyalty/interanal/usecases/loyalty/dto"
-	"github.com/Axel791/loyalty/interanal/usecases/loyalty/repositories"
+
+	"github.com/Axel791/loyalty/internal/usecases/loyalty/dto"
+	"github.com/Axel791/loyalty/internal/usecases/loyalty/repositories"
 )
 
 type GetUserBalanceHandler struct {

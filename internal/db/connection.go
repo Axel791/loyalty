@@ -3,7 +3,7 @@ package db
 import (
 	"github.com/jmoiron/sqlx"
 
-	"github.com/Axel791/loyalty/interanal/config"
+	"github.com/Axel791/loyalty/internal/config"
 )
 
 // ConnectDB - подключение к базе данных, применение миграций

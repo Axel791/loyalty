@@ -58,16 +58,15 @@ func main() {
 
 	pb.RegisterLoyaltyServiceServer(grpcServer, loyaltyServer)
 
-	lis, err := net.Listen("tcp", ":50051")
+	lis, err := net.Listen(cfg.GrpcNetwork, cfg.GrpcAddress)
 	if err != nil {
 		log.Fatalf("failed to listen on :50051: %v", err)
 	}
-	log.Println("Starting Loyalty gRPC server on :50051")
+	log.Println("Starting Loyalty gRPC server on", cfg.GrpcAddress)
 
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve gRPC: %v", err)
 	}
-
 	// REST
 
 }

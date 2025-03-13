@@ -2,15 +2,15 @@ package repositories
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
+	"github.com/jmoiron/sqlx"
 )
 
 type UnitOfWorkHandler struct {
-	db *sql.DB
+	db *sqlx.DB
 }
 
-func NewUnitOfWork(db *sql.DB) *UnitOfWorkHandler {
+func NewUnitOfWork(db *sqlx.DB) *UnitOfWorkHandler {
 	return &UnitOfWorkHandler{db: db}
 }
 

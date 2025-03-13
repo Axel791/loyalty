@@ -30,7 +30,7 @@ func (s *LoyaltyServer) CreateLoyaltyBalance(
 	ctx context.Context,
 	req *pb.CreateLoyaltyBalanceRequest,
 ) (*pb.CreateLoyaltyBalanceResponse, error) {
-	err := s.createLoyaltyBalanceHandler.CreateLoyaltyBalance(ctx, req.GetUserId())
+	err := s.createLoyaltyBalanceHandler.Execute(ctx, req.GetUserId())
 	if err != nil {
 		return &pb.CreateLoyaltyBalanceResponse{
 				Success:      false,

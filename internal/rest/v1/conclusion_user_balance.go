@@ -2,12 +2,13 @@ package v1
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/Axel791/appkit"
 	"github.com/Axel791/loyalty/internal/rest/v1/api"
 	"github.com/Axel791/loyalty/internal/usecases/loyalty/dto"
 	"github.com/Axel791/loyalty/internal/usecases/loyalty/scenarios"
 	log "github.com/sirupsen/logrus"
-	"net/http"
 )
 
 // ConclusionUserBalanceHandler - структура хэндлера по выводу баланса

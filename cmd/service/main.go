@@ -60,10 +60,15 @@ func main() {
 		loyaltyHistoryRepository,
 		unitOfWork,
 	)
+	inputUserBalanceUseCase := scenarios.NewInputUserBalance(
+		loyaltyBalanceRepository,
+		loyaltyHistoryRepository,
+		unitOfWork,
+	)
 	getUserBalance := scenarios.NewGetUserBalance(loyaltyBalanceRepository)
 
 	// gRPC
-	loyaltyServer := v1.NewLoyaltyServer(createUserBalance)
+	loyaltyServer := v1.NewLoyaltyServer(createUserBalance, inputUserBalanceUseCase)
 
 	pb.RegisterLoyaltyServiceServer(grpcServer, loyaltyServer)
 
@@ -77,7 +82,7 @@ func main() {
 		log.Fatalf("failed to serve gRPC: %v", err)
 	}
 	// REST
-	router.Route("/public/api/v1", func(r chi.Router) {
+	router.Route("/api/v1", func(r chi.Router) {
 		r.Method(
 			http.MethodPost,
 			"/loyalty/balance",

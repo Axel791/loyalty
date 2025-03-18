@@ -3,6 +3,7 @@ package v1
 import (
 	"context"
 	"fmt"
+	"github.com/Axel791/loyalty/internal/usecases/loyalty/dto"
 
 	"github.com/Axel791/loyalty/internal/grpc/v1/pb"
 	"github.com/Axel791/loyalty/internal/usecases/loyalty/scenarios"
@@ -14,14 +15,17 @@ import (
 type LoyaltyServer struct {
 	pb.UnimplementedLoyaltyServiceServer
 
-	createLoyaltyBalanceHandler *scenarios.CreateLoyaltyBalanceHandler
+	createLoyaltyBalanceUseCase scenarios.CreateUserBalanceUseCase
+	inputLoyaltyBalanceUseCase  scenarios.InputUserBalanceUseCase
 }
 
 func NewLoyaltyServer(
-	handler *scenarios.CreateLoyaltyBalanceHandler,
+	createLoyaltyBalanceUseCase scenarios.CreateUserBalanceUseCase,
+	inputLoyaltyBalanceUseCase scenarios.InputUserBalanceUseCase,
 ) *LoyaltyServer {
 	return &LoyaltyServer{
-		createLoyaltyBalanceHandler: handler,
+		createLoyaltyBalanceUseCase: createLoyaltyBalanceUseCase,
+		inputLoyaltyBalanceUseCase:  inputLoyaltyBalanceUseCase,
 	}
 }
 
@@ -30,7 +34,7 @@ func (s *LoyaltyServer) CreateLoyaltyBalance(
 	ctx context.Context,
 	req *pb.CreateLoyaltyBalanceRequest,
 ) (*pb.CreateLoyaltyBalanceResponse, error) {
-	err := s.createLoyaltyBalanceHandler.Execute(ctx, req.GetUserId())
+	err := s.createLoyaltyBalanceUseCase.Execute(ctx, req.GetUserId())
 	if err != nil {
 		return &pb.CreateLoyaltyBalanceResponse{
 				Success:      false,
@@ -40,6 +44,30 @@ func (s *LoyaltyServer) CreateLoyaltyBalance(
 	}
 
 	return &pb.CreateLoyaltyBalanceResponse{
+		Success: true,
+	}, nil
+}
+
+func (s *LoyaltyServer) ConclusionLoyaltyBalance(
+	ctx context.Context,
+	req *pb.ConcludeUserBalanceRequest,
+) (*pb.ConcludeUserBalanceResponse, error) {
+	var loyaltyBalance dto.LoyaltyBalance
+
+	loyaltyBalance = dto.LoyaltyBalance{
+		UserID: req.UserId,
+		Count:  req.Count,
+	}
+
+	err := s.inputLoyaltyBalanceUseCase.Execute(ctx, req.OrderId, loyaltyBalance)
+	if err != nil {
+		return &pb.ConcludeUserBalanceResponse{
+				Success:      false,
+				ErrorMessage: fmt.Sprintf("failed to input loyalty balance: %v", err),
+			},
+			status.Errorf(codes.Internal, "failed to input loyalty balance: %v", err)
+	}
+	return &pb.ConcludeUserBalanceResponse{
 		Success: true,
 	}, nil
 }

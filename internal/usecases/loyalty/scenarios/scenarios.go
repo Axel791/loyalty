@@ -7,7 +7,7 @@ import (
 )
 
 type InputUserBalanceUseCase interface {
-	Execute(ctx context.Context, balance dto.LoyaltyBalance) error
+	Execute(ctx context.Context, orderID int64, balance dto.LoyaltyBalance) error
 }
 
 type GetUserBalanceUseCase interface {

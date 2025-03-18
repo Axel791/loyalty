@@ -2,6 +2,7 @@ package scenarios
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/Axel791/loyalty/internal/domains"
@@ -27,7 +28,7 @@ func NewInputUserBalance(
 	}
 }
 
-func (s *InputUserBalanceHandler) Execute(ctx context.Context, balance dto.LoyaltyBalance) error {
+func (s *InputUserBalanceHandler) Execute(ctx context.Context, orderID int64, balance dto.LoyaltyBalance) error {
 	var domainLoyaltyBalance domains.LoyaltyBalance
 	domainLoyaltyBalance = domains.LoyaltyBalance{
 		UserID: balance.UserID,
@@ -41,10 +42,17 @@ func (s *InputUserBalanceHandler) Execute(ctx context.Context, balance dto.Loyal
 		return err
 	}
 
+	loyaltyBalance := domainLoyaltyBalance.Count / 2
+	domainLoyaltyBalance.Count = loyaltyBalance
+
 	var loyaltyHistory domains.LoyaltyHistory
 	loyaltyHistory = domains.LoyaltyHistory{
 		UserID: balance.UserID,
 		Count:  balance.Count,
+		OrderID: sql.NullInt64{
+			Int64: orderID,
+			Valid: true,
+		},
 	}
 	err := s.unitOfWork.Do(ctx, func(txContext context.Context) error {
 

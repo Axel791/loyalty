@@ -8,7 +8,6 @@ package pb
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -21,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	LoyaltyService_CreateLoyaltyBalance_FullMethodName = "/loyalty.LoyaltyService/CreateLoyaltyBalance"
+	LoyaltyService_ConcludeUserBalance_FullMethodName  = "/loyalty.LoyaltyService/ConcludeUserBalance"
 )
 
 // LoyaltyServiceClient is the client API for LoyaltyService service.
@@ -28,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LoyaltyServiceClient interface {
 	CreateLoyaltyBalance(ctx context.Context, in *CreateLoyaltyBalanceRequest, opts ...grpc.CallOption) (*CreateLoyaltyBalanceResponse, error)
+	ConcludeUserBalance(ctx context.Context, in *ConcludeUserBalanceRequest, opts ...grpc.CallOption) (*ConcludeUserBalanceResponse, error)
 }
 
 type loyaltyServiceClient struct {
@@ -48,11 +49,22 @@ func (c *loyaltyServiceClient) CreateLoyaltyBalance(ctx context.Context, in *Cre
 	return out, nil
 }
 
+func (c *loyaltyServiceClient) ConcludeUserBalance(ctx context.Context, in *ConcludeUserBalanceRequest, opts ...grpc.CallOption) (*ConcludeUserBalanceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ConcludeUserBalanceResponse)
+	err := c.cc.Invoke(ctx, LoyaltyService_ConcludeUserBalance_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LoyaltyServiceServer is the server API for LoyaltyService service.
 // All implementations must embed UnimplementedLoyaltyServiceServer
 // for forward compatibility.
 type LoyaltyServiceServer interface {
 	CreateLoyaltyBalance(context.Context, *CreateLoyaltyBalanceRequest) (*CreateLoyaltyBalanceResponse, error)
+	ConcludeUserBalance(context.Context, *ConcludeUserBalanceRequest) (*ConcludeUserBalanceResponse, error)
 	mustEmbedUnimplementedLoyaltyServiceServer()
 }
 
@@ -65,6 +77,9 @@ type UnimplementedLoyaltyServiceServer struct{}
 
 func (UnimplementedLoyaltyServiceServer) CreateLoyaltyBalance(context.Context, *CreateLoyaltyBalanceRequest) (*CreateLoyaltyBalanceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateLoyaltyBalance not implemented")
+}
+func (UnimplementedLoyaltyServiceServer) ConcludeUserBalance(context.Context, *ConcludeUserBalanceRequest) (*ConcludeUserBalanceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConcludeUserBalance not implemented")
 }
 func (UnimplementedLoyaltyServiceServer) mustEmbedUnimplementedLoyaltyServiceServer() {}
 func (UnimplementedLoyaltyServiceServer) testEmbeddedByValue()                        {}
@@ -105,6 +120,24 @@ func _LoyaltyService_CreateLoyaltyBalance_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LoyaltyService_ConcludeUserBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConcludeUserBalanceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoyaltyServiceServer).ConcludeUserBalance(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LoyaltyService_ConcludeUserBalance_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoyaltyServiceServer).ConcludeUserBalance(ctx, req.(*ConcludeUserBalanceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LoyaltyService_ServiceDesc is the grpc.ServiceDesc for LoyaltyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -115,6 +148,10 @@ var LoyaltyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateLoyaltyBalance",
 			Handler:    _LoyaltyService_CreateLoyaltyBalance_Handler,
+		},
+		{
+			MethodName: "ConcludeUserBalance",
+			Handler:    _LoyaltyService_ConcludeUserBalance_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
